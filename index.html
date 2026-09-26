@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GlanceBar - Meta MR Productivity Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-glow: rgba(37, 99, 235, 0.4);
+        --bg: #090d16;
+        --card-bg: rgba(18, 24, 38, 0.85);
+        --border: rgba(255, 255, 255, 0.12);
+        --text: #f1f5f9;
+        --text-dim: #94a3b8;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        user-select: none;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+      }
+      #canvas-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+      /* Pre-entry landing UI */
+      #launch-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        background: radial-gradient(circle at 50% 30%, #172554 0%, #090d16 80%);
+        backdrop-filter: blur(10px);
+        transition: opacity 0.5s ease;
+      }
+      .panel {
+        max-width: 520px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 36px;
+        text-align: center;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 40px var(--primary-glow);
+      }
+      .logo-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 16px;
+        background: rgba(37, 99, 235, 0.2);
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #93c5fd;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 12px;
+        background: linear-gradient(135deg, #ffffff 0%, #93c5fd 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      p.subtitle {
+        font-size: 15px;
+        line-height: 1.6;
+        color: var(--text-dim);
+        margin-bottom: 28px;
+      }
+      .feature-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 30px;
+      }
+      .pill {
+        font-size: 12px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 5px 12px;
+        border-radius: 8px;
+        color: #cbd5e1;
+      }
+      .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .btn {
+        width: 100%;
+        padding: 14px 24px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .btn-primary {
+        background: #2563eb;
+        color: #ffffff;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+      }
+      .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+      }
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.14);
+      }
+
+      /* Desktop & In-session HUD info */
+      #hud {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 5;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 12px 18px;
+        font-size: 13px;
+        color: #cbd5e1;
+        pointer-events: none;
+        display: none;
+      }
+      #hud .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+        margin-right: 8px;
+        box-shadow: 0 0 8px #10b981;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="canvas-container"></div>
+
+    <div id="hud">
+      <div><span class="status-dot"></span>GlanceBar: <span id="hud-mode">Meta Quest MR (Passthrough)</span></div>
+      <div style="margin-top: 4px; font-size: 11px; color: #94a3b8;">
+        Hands-First Passthrough • Look at Phone &amp; Pinch to Interact
+      </div>
+    </div>
+
+    <div id="launch-overlay">
+      <div class="panel">
+        <div class="logo-badge">
+          <span>✨</span>
+          <span>Meta MR Productivity Space</span>
+        </div>
+        <h1>GlanceBar</h1>
+        <p class="subtitle">
+          Physical-anchored status bar over your phone leveraging peripheral vision. Glance to expand notifications &amp; pinch or tap to reply via Custom Surface Keyboard &amp; Trackpad without arm fatigue.
+        </p>
+
+        <div class="feature-pills">
+          <span class="pill">📍 Draggable Anchor</span>
+          <span class="pill">👁️ Peripheral Vision</span>
+          <span class="pill">🤏 Right-Hand Pinch</span>
+          <span class="pill">⌨️ Desk Surface Keyboard &amp; Trackpad</span>
+          <span class="pill">📊 Mock PPT Workspace</span>
+        </div>
+
+        <div class="btn-group">
+          <button id="btn-enter-mr" class="btn btn-primary">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            Enter MR Passthrough (Meta Quest)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

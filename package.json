@@ -1,0 +1,22 @@
+{
+  "name": "glancebar",
+  "displayName": "GlanceBar - Meta MR Peripheral Productivity Bar",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "preview": "vite preview --host",
+    "test": "./node_modules/.bin/esbuild scripts/test-cli.ts --bundle --platform=node --format=esm --outfile=scripts/dist-test.mjs && node scripts/dist-test.mjs"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.170.0",
+    "@vitejs/plugin-basic-ssl": "^1.2.0",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.1"
+  }
+}

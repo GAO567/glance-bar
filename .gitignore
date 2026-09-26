@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Production build outputs
+dist/
+dist-ssr/
+*.local
+
+# Temporary script bundles
+scripts/dist-*.mjs
+scripts/*.mjs
+
+# Legacy Unity workspaces (large 5GB binaries)
+GlanceBarUnity/
+GlanceBar_Unity/
+Library/
+
+# System and OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor & IDE configs
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary test media
+test_*.jpg
+test_*.png
+test*.mp4
