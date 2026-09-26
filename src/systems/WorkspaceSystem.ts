@@ -47,11 +47,13 @@ export class WorkspaceSystem {
     this.group.renderOrder = 1;
     this.screenCenter = new THREE.Vector3(0, 1.15, -1.15);
 
+    const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) || './';
+
     // 1. Initialize PPT Window (Border removed)
     this.pptWindow = this.createWindow(
       'ppt',
       'PowerPoint Presentation',
-      '/assets/presentation_slide.png',
+      `${baseUrl}assets/presentation_slide.png`,
       1020 / 638
     );
 
@@ -59,7 +61,7 @@ export class WorkspaceSystem {
     this.wordWindow = this.createWindow(
       'word',
       'Word Document',
-      '/assets/word_document.png',
+      `${baseUrl}assets/word_document.png`,
       1024 / 641
     );
 
